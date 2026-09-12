@@ -179,7 +179,7 @@ document.addEventListener("DOMContentLoaded", () => {
       statLikes.textContent = formatCompactNumber(data.total_likes || 0);
       statComments.textContent = formatCompactNumber(data.total_comments || 0);
       if (data.executed_at) {
-        pillLastRun.textContent = `Last Job Execution: ${data.executed_at}`;
+        pillLastRun.textContent = `Last Execution: ${data.executed_at}`;
       }
 
       renderPrimaryCharts(data);
@@ -274,14 +274,11 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const flagMap = { 'ca': '🇨🇦 CA', 'gb': '🇬🇧 GB', 'us': '🇺🇸 US' };
-
     tableBody.innerHTML = records.map(r => {
-      const reg = str(r.region).toLowerCase();
-      const flagLabel = flagMap[reg] || reg.toUpperCase();
+      const reg = str(r.region).toUpperCase();
       return `
         <tr>
-          <td><span class="region-badge">${flagLabel}</span></td>
+          <td><span class="region-badge">${reg}</span></td>
           <td>${escapeHtml(r.category_name || 'General')}</td>
           <td title="${escapeHtml(r.title)}"><strong>${escapeHtml(truncate(r.title, 38))}</strong></td>
           <td>${escapeHtml(truncate(r.channel_title || 'N/A', 22))}</td>
@@ -414,11 +411,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (topCategoriesChart) topCategoriesChart.destroy();
 
     const chartColors = [
-      "rgba(56, 189, 248, 0.9)",
-      "rgba(168, 85, 247, 0.9)",
-      "rgba(244, 63, 94, 0.9)",
-      "rgba(251, 191, 36, 0.9)",
-      "rgba(52, 211, 153, 0.9)"
+      "rgba(37, 99, 235, 0.85)",
+      "rgba(79, 70, 229, 0.85)",
+      "rgba(8, 145, 178, 0.85)",
+      "rgba(5, 150, 105, 0.85)",
+      "rgba(217, 119, 6, 0.85)"
     ];
 
     topCategoriesChart = new Chart(ctxCategories, {
@@ -429,9 +426,7 @@ document.addEventListener("DOMContentLoaded", () => {
           label: activeChartMetric.toUpperCase(),
           data: catViews,
           backgroundColor: chartColors,
-          borderRadius: 8,
-          borderWidth: 1,
-          borderColor: "rgba(255, 255, 255, 0.2)"
+          borderRadius: 4
         }]
       },
       options: {
@@ -439,10 +434,10 @@ document.addEventListener("DOMContentLoaded", () => {
         maintainAspectRatio: false,
         plugins: { legend: { display: false } },
         scales: {
-          x: { ticks: { color: "#94a3b8", font: { weight: "600" } }, grid: { display: false } },
+          x: { ticks: { color: "#9ca3af" }, grid: { display: false } },
           y: { 
-            ticks: { color: "#94a3b8", callback: (v) => formatCompactNumber(v) },
-            grid: { color: "rgba(255, 255, 255, 0.07)" }
+            ticks: { color: "#9ca3af", callback: (v) => formatCompactNumber(v) },
+            grid: { color: "#1f2937" }
           }
         }
       }
@@ -462,19 +457,19 @@ document.addEventListener("DOMContentLoaded", () => {
         datasets: [{
           data: regValues,
           backgroundColor: [
-            "rgba(56, 189, 248, 0.95)",
-            "rgba(244, 63, 94, 0.95)",
-            "rgba(251, 191, 36, 0.95)"
+            "#2563eb",
+            "#4f46e5",
+            "#0891b2"
           ],
-          borderWidth: 3,
-          borderColor: "#0f172a"
+          borderWidth: 2,
+          borderColor: "#111827"
         }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: { position: "right", labels: { color: "#cbd5e1", font: { size: 13, weight: "600" } } }
+          legend: { position: "right", labels: { color: "#9ca3af", font: { size: 12 } } }
         }
       }
     });
@@ -498,8 +493,8 @@ document.addEventListener("DOMContentLoaded", () => {
         datasets: [{
           label: "Total Views",
           data: channelViews,
-          backgroundColor: "rgba(168, 85, 247, 0.9)",
-          borderRadius: 6
+          backgroundColor: "rgba(79, 70, 229, 0.85)",
+          borderRadius: 4
         }]
       },
       options: {
@@ -508,8 +503,8 @@ document.addEventListener("DOMContentLoaded", () => {
         maintainAspectRatio: false,
         plugins: { legend: { display: false } },
         scales: {
-          x: { ticks: { color: "#94a3b8", callback: (v) => formatCompactNumber(v) }, grid: { color: "rgba(255, 255, 255, 0.07)" } },
-          y: { ticks: { color: "#cbd5e1" }, grid: { display: false } }
+          x: { ticks: { color: "#9ca3af", callback: (v) => formatCompactNumber(v) }, grid: { color: "#1f2937" } },
+          y: { ticks: { color: "#9ca3af" }, grid: { display: false } }
         }
       }
     });
@@ -528,13 +523,13 @@ document.addEventListener("DOMContentLoaded", () => {
         datasets: [{
           label: "Avg Like Rate (%)",
           data: engRates,
-          borderColor: "#38bdf8",
-          backgroundColor: "rgba(56, 189, 248, 0.2)",
-          borderWidth: 3,
+          borderColor: "#2563eb",
+          backgroundColor: "rgba(37, 99, 235, 0.1)",
+          borderWidth: 2,
           fill: true,
-          tension: 0.4,
-          pointBackgroundColor: "#38bdf8",
-          pointRadius: 5
+          tension: 0.3,
+          pointBackgroundColor: "#2563eb",
+          pointRadius: 4
         }]
       },
       options: {
@@ -542,8 +537,8 @@ document.addEventListener("DOMContentLoaded", () => {
         maintainAspectRatio: false,
         plugins: { legend: { display: false } },
         scales: {
-          x: { ticks: { color: "#cbd5e1" }, grid: { display: false } },
-          y: { ticks: { color: "#94a3b8", callback: v => v + '%' }, grid: { color: "rgba(255, 255, 255, 0.07)" } }
+          x: { ticks: { color: "#9ca3af" }, grid: { display: false } },
+          y: { ticks: { color: "#9ca3af", callback: v => v + '%' }, grid: { color: "#1f2937" } }
         }
       }
     });
