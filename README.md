@@ -93,5 +93,5 @@ If you have any doubts, queries, or suggestions then, please connect with me on 
 [gmail]: mailto:yadavritik2027@gmail.com
 
 <!--Logo Link -->
-[linkedinbadge]: https://img.shields.io/badge/waqargul-0077B5?style=for-the-badge&logo=linkedin&logoColor=white
+[linkedinbadge]: https://img.shields.io/badge/ritikyadav18?style=for-the-badge&logo=linkedin&logoColor=white
 [gmailbadge]: https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white
