@@ -216,7 +216,20 @@ class PipelineRequestHandler(SimpleHTTPRequestHandler):
             self._send_json({"success": False, "error": str(e)}, status=500)
 
     def _send_json(self, data, status=200):
-        body = json.dumps(data, default=str).encode("utf-8")
+        def clean_nans(obj):
+            import math
+            if isinstance(obj, float):
+                if math.isnan(obj) or math.isinf(obj):
+                    return None
+                return obj
+            elif isinstance(obj, dict):
+                return {k: clean_nans(v) for k, v in obj.items()}
+            elif isinstance(obj, list):
+                return [clean_nans(v) for v in obj]
+            return obj
+
+        cleaned_data = clean_nans(data)
+        body = json.dumps(cleaned_data, default=str).encode("utf-8")
         self.send_response(status)
         self.send_header("Content-Type", "application/json")
         self.send_header("Access-Control-Allow-Origin", "*")
