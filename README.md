@@ -1,5 +1,5 @@
 <p align='center'>
-<img src='https://github.com/waqarg2001/Youtube-Data-Pipeline-AWS/blob/main/assets/Icon.png' width=430 height=270 >
+<img src='https://github.com/ritikyadav-io/AWS-Youtube-DataPipeline/blob/main/assets/Icon.png' width=430 height=270 >
 </p>
 
 ---
@@ -9,17 +9,14 @@
 <p align='center'>
 <img src="https://i.ibb.co/KxfMMsP/built-with-love.png" alt="built-with-love" border="0">
 <img src="https://i.ibb.co/MBDK1Pk/powered-by-coffee.png" alt="powered-by-coffee" border="0">
-<img src="https://i.ibb.co/CtGqhQH/cc-nc-sa.png" alt="cc-nc-sa" border="0">
 </p>
 
 <p align="center">
   <a href="#overview">Overview</a> •
   <a href="#tools">Tools</a> •
   <a href="#architecture">Architecture</a> •
-  <a href="#dashboard">Dashboard</a> •
   <a href="#screenshots">Screenshots</a> •
-  <a href="#support">Support</a> •
-  <a href="#license">License</a>
+  <a href="#support">Support</a> •  
 </p>
 
 
@@ -81,18 +78,7 @@ Following is the architecture of the project.
   <img src='https://github.com/waqarg2001/Youtube-Data-Pipeline-AWS/blob/main/assets/AWS_Python_ETL_Project_Architecture.png' height=385 width=650>
 </p>  
 
-## Dashboard
 
-Access simplified dashboard from <a href='https://github.com/waqarg2001/Youtube-Data-Pipeline-AWS/blob/main/assets/dashboard.pdf'>here</a>.
-
-
-## Screenshots
-
-Following are project execution screenshots from AWS portal.
-
-<img src="https://github.com/waqarg2001/Youtube-Data-Pipeline-AWS/blob/main/assets/ss1.png" width=900 height=400>
-<br>
-<img src="https://github.com/waqarg2001/Youtube-Data-Pipeline-AWS/blob/main/assets/ss2.png" width=900 height=400>
 
 ## Support
 
@@ -102,19 +88,9 @@ If you have any doubts, queries, or suggestions then, please connect with me on 
 [![Gmail Badge][gmailbadge]][gmail]
 
 
-## License
-
-<a href = 'https://creativecommons.org/licenses/by-nc-sa/4.0/' target="_blank">
-    <img src="https://i.ibb.co/mvmWGkm/by-nc-sa.png" alt="by-nc-sa" border="0" width="88" height="31">
-</a>
-
-This license allows reusers to distribute, remix, adapt, and build upon the material in any medium or format for noncommercial purposes only, and only so long as attribution is given to the creator. If you remix, adapt, or build upon the material, you must license the modified material under identical terms.
-
-
-
 <!--Profile Link-->
-[linkedin]: https://www.linkedin.com/in/waqargul
-[gmail]: mailto:waqargul6@gmail.com
+[linkedin]: https://www.linkedin.com/in/ritikyadav18
+[gmail]: mailto:yadavritik2027@gmail.com
 
 <!--Logo Link -->
 [linkedinbadge]: https://img.shields.io/badge/waqargul-0077B5?style=for-the-badge&logo=linkedin&logoColor=white
