@@ -69,21 +69,25 @@ This project implements an **End-to-End AWS Cloud Data Engineering Pipeline** th
 
 ```text
 AWS-Youtube-DataPipeline/
-├── assets/                              # Architecture diagram and dashboard reference files
+├── scripts/
+│   ├── lambda_function.py               # AWS Lambda function for parsing raw JSON category maps
+│   ├── etl_pipeline_csv_to_parquet.py    # AWS Glue PySpark job for CSV cleaning & partitioning
+│   └── etl_pipeline_materialised_view.py # AWS Glue PySpark job for relational inner join & analytics
+├── run_pipeline.py                      # Local Python ETL engine (replicates Lambda & Glue jobs)
+├── server.py                            # Python HTTP backend server & DuckDB SQL Query API
+├── web/                                 # Enterprise Web Console Frontend
+│   ├── index.html                       # Dashboard UI layout & Athena SQL console
+│   ├── style.css                        # Enterprise dark-mode styling
+│   └── app.js                           # Chart.js analytics & live query execution
 ├── data/
-│   ├── raw/                             # Source category-reference JSON files
-│   ├── cleansed/                        # Partitioned Parquet data lake outputs
-│   └── analytics/                       # Local materialized-view and dashboard metric outputs
-├── docs/                                # Supporting project documentation
-├── scripts/                             # AWS Lambda and Glue job definitions
-├── web/                                 # Dashboard frontend (HTML, CSS, and JavaScript)
-├── run_pipeline.py                      # Local ETL runner used by the dashboard and CLI
-├── server.py                            # Local HTTP server and DuckDB query API
-├── package.json                         # npm command shortcuts
-└── README.md                            # Project overview and setup instructions
+│   ├── raw/                             # Raw JSON category reference mappings
+│   ├── cleansed/                        # Partitioned Parquet data lake (region=ca, gb, us)
+│   └── analytics/                       # Joined materialized views (materialised_view_local.csv)
+├── generate_presentation.py             # Python script for generating PowerPoint deck (.pptx)
+├── AWS_YouTube_Data_Pipeline_Presentation.pptx # 8-Slide PowerPoint Presentation Deck
+├── package.json                         # Project npm script shortcuts
+└── README.md                            # Project documentation
 ```
-
-For a detailed guide to each directory, its inputs, and its generated outputs, see [docs/project-structure.md](docs/project-structure.md).
 
 ---
 
@@ -116,6 +120,12 @@ Open your browser at **[http://localhost:8080](http://localhost:8080)**.
 Re-execute the ETL engine to process datasets locally:
 ```bash
 npm run etl
+```
+
+### 4. Re-generate PowerPoint Presentation Deck
+Generate the `.pptx` presentation deck:
+```bash
+npm run presentation
 ```
 
 ---
