@@ -1,0 +1,23 @@
+{
+  "name": "aws-youtube-data-pipeline",
+  "version": "1.0.0",
+  "description": "AWS Cloud Data Engineering Pipeline & Analytics Dashboard",
+  "scripts": {
+    "dev": "py server.py",
+    "start": "py server.py",
+    "etl": "py run_pipeline.py",
+    "presentation": "py generate_presentation.py"
+  },
+  "keywords": [
+    "aws",
+    "etl",
+    "data-engineering",
+    "pyspark",
+    "athena",
+    "glue",
+    "quicksight",
+    "dashboard"
+  ],
+  "author": "Ritik Yadav",
+  "license": "MIT"
+}
