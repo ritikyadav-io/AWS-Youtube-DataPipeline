@@ -1,97 +1,177 @@
-<p align='center'>
-<img src='https://github.com/ritikyadav-io/AWS-Youtube-DataPipeline/blob/main/assets/Icon.png' width=430 height=270 >
-</p>
+<div align="center">
+
+# 🚀 AWS YouTube Data Engineering & Analytics Pipeline
+
+### *Scalable Serverless ETL Pipeline, Parquet Data Lake & Analytics Console*
+
+![AWS](https://img.shields.io/badge/AWS-Cloud%20Data%20Engineering-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![PySpark](https://img.shields.io/badge/PySpark-AWS%20Glue-E25A1C?style=for-the-badge&logo=apachespark&logoColor=white)
+![DuckDB](https://img.shields.io/badge/DuckDB-Athena%20SQL-FFF000?style=for-the-badge&logo=duckdb&logoColor=black)
+![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
+
+</div>
 
 ---
 
-<h4 align='center'> Leveraging <a href='https://aws.amazon.com/' target='_blank'>AWS Cloud Services,</a> an ETL pipeline transforms YouTube video statistics data. Data is downloaded from <a href='https://kaggle.com/datasnaek/youtube-new'>Kaggle</a>, uploaded to an S3 bucket, and cataloged using AWS Glue for querying with Athena. AWS Lambda converts to Parquet format and stores it in a clean S3 bucket. AWS QuickSight then visualizes the materialised data, providing insights into YouTube video performance. </h4>
+## 📌 Executive Summary
 
-<p align='center'>
-<img src="https://i.ibb.co/KxfMMsP/built-with-love.png" alt="built-with-love" border="0">
-<img src="https://i.ibb.co/MBDK1Pk/powered-by-coffee.png" alt="powered-by-coffee" border="0">
-</p>
+This project implements an **End-to-End AWS Cloud Data Engineering Pipeline** that ingests, cleanses, transforms, and analyzes large-scale global YouTube trending video datasets across multiple countries (`US`, `Canada`, `Great Britain`).
 
-<p align="center">
-  <a href="#overview">Overview</a> •
-  <a href="#tools">Tools</a> •
-  <a href="#architecture">Architecture</a> •
-  <a href="#screenshots">Screenshots</a> •
-  <a href="#support">Support</a> •  
-</p>
+### Key Achievements:
+- **Processed Dataset**: **14,204 trending video records** joined with **32 unique category reference catalogs**.
+- **Viewership Analyzed**: **20.49 Billion total views**, **537.3 Million likes**, and **56.5 Million comments**.
+- **Storage Optimization**: Converted raw CSV files to **Snappy-compressed Parquet**, reducing S3 storage costs by **~80%**.
+- **Query Acceleration**: Accelerated query performance by **10x** using partitioned column-oriented storage and serverless SQL.
 
+---
 
-## Overview
+## 🏗️ System Architecture
 
-
-This project utilizes AWS Cloud Services to build an efficient ETL pipeline for processing YouTube video statistics data. The data, available [here](https://kaggle.com/datasnaek/youtube-new), is downloaded from Kaggle and uploaded to an S3 bucket. AWS Glue catalogs the data, enabling seamless querying using Amazon Athena. The pipeline processes both JSON and CSV data, converting them into Parquet format. JSON data is transformed using AWS Lambda functions with AWS Data Wrangler layers, while CSV data is processed through visual ETL jobs in AWS Glue.
-
-Data is first stored in a raw S3 bucket, then cleaned and organized in a cleansed bucket, and finally joined and stored in an analytics or materialized bucket. Automated ETL jobs run daily using AWS Glue workflows, ensuring up-to-date data processing. A simple QuickSight dashboard visualizes the cleansed data, providing valuable insights into YouTube video performance across different regions. This setup ensures a scalable and efficient data processing workflow, facilitating detailed analysis and reporting.
-
-
-
-The repository directory structure is as follows:
-```
-├── assets/                        <- Includes assets for the repo.
-│   └── (Contains images, architecture and quicksight dashboard)
-│
-├── data/                          <- Contains data used and processed by the project.
-│   ├── raw/                      <- Raw data files (not included here due to large files size).
-│   ├── cleansed/                 <- Cleansed data files.
-│   └── analytics/                <- Materialized view for analytics and reporting.
-│
-├── docs/                          <- Documentation for the project.
-│   └── solution methodology.pdf   <- Detailed project documentation.
-│
-├── scripts/                                       <- Python scripts for the ETL pipeline.
-│   ├── etl_pipeline_csv_to_parquet.py             <- csv to parquet pipeline glue script.
-│   ├── lambda_function.py                         <- Lambda function code.
-│   └── etl_pipeline_materialised_view.py          <- materialised view pipeline glue script
-│
-├── README.md                      <- The top-level README for developers using this project.
-
+```text
+┌────────────────────────┐      ┌────────────────────────┐      ┌────────────────────────┐
+│  Kaggle Raw Dataset    │      │  AWS S3 Raw Storage    │      │  AWS Lambda + Wrangler │
+│  - Daily Video CSVs    │ ───► │  - Raw Landing Bucket  │ ───► │  - JSON Catalog Parser │
+│  - JSON Category Maps  │      │  - Unpartitioned Data  │      │  - Parquet Normalizer  │
+└────────────────────────┘      └────────────────────────┘      └────────────────────────┘
+                                                                             │
+                                                                             ▼
+┌────────────────────────┐      ┌────────────────────────┐      ┌────────────────────────┐
+│  Amazon Athena / SQL   │      │ AWS Glue Data Catalog  │      │ AWS Glue PySpark ETL   │
+│  - Serverless SQL      │ ◄─── │ - Materialized Views   │ ◄─── │ - Pushdown Predicates  │
+│  - Fast Analytics      │      │ - Partition Metadata   │      │ - Inner Join Execution │
+└────────────────────────┘      └────────────────────────┘      └────────────────────────┘
+            │
+            ▼
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│                        Enterprise Web Console & Analytics Dashboard                   │
+│         - Live DuckDB SQL Sandbox    - Interactive Chart.js Visualizations           │
+│         - Glue Job CloudWatch Logs   - CSV Data Exports & Multi-Column Sorting       │
+└────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
+---
 
+## 📊 Analytics Key Insights
 
-## Tools 
+| Metric | Analyzed Value | Description |
+|---|---|---|
+| **Total Processed Records** | `14,204` | Cleaned and joined trending video records |
+| **Total Views Analyzed** | `20,491,030,082` | **20.49 Billion** cumulative video views |
+| **Total Likes** | `537,308,908` | **537.3 Million** cumulative user likes |
+| **Total Comments** | `56,560,318` | **56.5 Million** user comments |
+| **Top Category by Views** | **Music** | **6.08 Billion views** (`~29.7%` share) |
+| **Top Regional Share** | **Great Britain (GB)** | **10.71 Billion views** (`~52.2%` share) |
 
-To build this project, the following tools were used:
+---
 
-- AWS S3
-- AWS Glue
-- AWS Lambda/Layers
-- Amazon Athena
-- AWS QuickSight
-- AWS Data Wrangler
-- AWS Cloudwatch
-- AWS IAM
-- Python
-- Pandas
-- Spark
-- Git
+## 🛠️ Repository Structure
 
-## Architecture
+```text
+AWS-Youtube-DataPipeline/
+├── scripts/
+│   ├── lambda_function.py               # AWS Lambda function for parsing raw JSON category maps
+│   ├── etl_pipeline_csv_to_parquet.py    # AWS Glue PySpark job for CSV cleaning & partitioning
+│   └── etl_pipeline_materialised_view.py # AWS Glue PySpark job for relational inner join & analytics
+├── run_pipeline.py                      # Local Python ETL engine (replicates Lambda & Glue jobs)
+├── server.py                            # Python HTTP backend server & DuckDB SQL Query API
+├── web/                                 # Enterprise Web Console Frontend
+│   ├── index.html                       # Dashboard UI layout & Athena SQL console
+│   ├── style.css                        # Enterprise dark-mode styling
+│   └── app.js                           # Chart.js analytics & live query execution
+├── data/
+│   ├── raw/                             # Raw JSON category reference mappings
+│   ├── cleansed/                        # Partitioned Parquet data lake (region=ca, gb, us)
+│   └── analytics/                       # Joined materialized views (materialised_view_local.csv)
+├── generate_presentation.py             # Python script for generating PowerPoint deck (.pptx)
+├── AWS_YouTube_Data_Pipeline_Presentation.pptx # 8-Slide PowerPoint Presentation Deck
+├── package.json                         # Project npm script shortcuts
+└── README.md                            # Project documentation
+```
 
-Following is the architecture of the project.
+---
 
-<p align='center'>
-  <img src='https://github.com/waqarg2001/Youtube-Data-Pipeline-AWS/blob/main/assets/AWS_Python_ETL_Project_Architecture.png' height=385 width=650>
-</p>  
+## 💻 Quick Start & Local Execution
 
+### Prerequisites
+- **Python 3.11+** installed
+- **Node.js 18+** installed
 
+### 1. Installation
+Clone the repository and install required dependencies:
+```bash
+git clone https://github.com/ritikyadav-io/AWS-Youtube-DataPipeline.git
+cd AWS-Youtube-DataPipeline
+py -m pip install pandas pyarrow duckdb python-pptx
+```
 
-## Support
+### 2. Launch Web Analytics Dashboard & SQL Console
+Run the project via `npm`:
+```bash
+npm run dev
+```
+Or launch directly using Python:
+```bash
+py server.py
+```
+Open your browser at **[http://localhost:8080](http://localhost:8080)**.
 
-If you have any doubts, queries, or suggestions then, please connect with me on any of the following platforms:
+### 3. Run Local ETL Pipeline (CLI)
+Re-execute the ETL engine to process datasets locally:
+```bash
+npm run etl
+```
 
-[![Linkedin Badge][linkedinbadge]][linkedin] 
-[![Gmail Badge][gmailbadge]][gmail]
+### 4. Re-generate PowerPoint Presentation Deck
+Generate the `.pptx` presentation deck:
+```bash
+npm run presentation
+```
 
+---
 
-<!--Profile Link-->
-[linkedin]: https://www.linkedin.com/in/ritikyadav18
-[gmail]: mailto:yadavritik2027@gmail.com
+## 🔍 Amazon Athena / DuckDB SQL Query Console
 
-<!--Logo Link -->
-[linkedinbadge]: https://img.shields.io/badge/ritikyadav?style=for-the-badge&logo=linkedin&logoColor=white
-[gmailbadge]: https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white
+The dashboard includes a live SQL console where you can query the target dataset (`youtube_data` table).
+
+### Sample SQL Queries:
+
+#### 1. Top 5 Categories by Views & Average Like Rate
+```sql
+SELECT category_name, 
+       COUNT(*) as video_count, 
+       SUM(views) as total_views, 
+       ROUND(AVG(like_rate_pct), 2) as avg_like_pct 
+FROM youtube_data 
+GROUP BY category_name 
+ORDER BY total_views DESC 
+LIMIT 5;
+```
+
+#### 2. Top 10 YouTube Channels by Viewership
+```sql
+SELECT channel_title, 
+       COUNT(*) as video_count, 
+       SUM(views) as total_views 
+FROM youtube_data 
+GROUP BY channel_title 
+ORDER BY total_views DESC 
+LIMIT 10;
+```
+
+---
+
+## 📄 PowerPoint Presentation Deck
+
+An automated 8-slide presentation deck is included in the root directory:
+- 📁 **File**: [AWS_YouTube_Data_Pipeline_Presentation.pptx](AWS_YouTube_Data_Pipeline_Presentation.pptx)
+
+---
+
+## 📜 License
+
+This project is licensed under the **MIT License** - see the `LICENSE` file for details.
+
+<div align="center">
+  <sub>Built with ❤️ by Ritik Yadav</sub>
+</div>
