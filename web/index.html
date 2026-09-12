@@ -48,7 +48,7 @@
       <div class="hero-status-pills">
         <div class="status-pill">
           <span class="dot green"></span>
-          <span>Status: Active</span>
+          <span>Data Lake: Active</span>
         </div>
         <div class="status-pill">
           <i data-lucide="clock"></i>
@@ -59,7 +59,7 @@
 
     <!-- Key Metrics Grid -->
     <section class="metrics-grid">
-      <div class="metric-card">
+      <div class="metric-card purple">
         <div class="metric-icon purple"><i data-lucide="file-text"></i></div>
         <div class="metric-info">
           <span class="metric-label">Processed Records</span>
@@ -67,7 +67,7 @@
         </div>
       </div>
 
-      <div class="metric-card">
+      <div class="metric-card blue">
         <div class="metric-icon blue"><i data-lucide="eye"></i></div>
         <div class="metric-info">
           <span class="metric-label">Total Views</span>
@@ -75,15 +75,15 @@
         </div>
       </div>
 
-      <div class="metric-card">
-        <div class="metric-icon red"><i data-lucide="thumbs-up"></i></div>
+      <div class="metric-card rose">
+        <div class="metric-icon rose"><i data-lucide="thumbs-up"></i></div>
         <div class="metric-info">
           <span class="metric-label">Total Likes</span>
           <span class="metric-value" id="stat-total-likes">--</span>
         </div>
       </div>
 
-      <div class="metric-card">
+      <div class="metric-card amber">
         <div class="metric-icon amber"><i data-lucide="message-square"></i></div>
         <div class="metric-info">
           <span class="metric-label">Total Comments</span>
@@ -92,12 +92,29 @@
       </div>
     </section>
 
+    <!-- Interactive Regional Quick Filter Bar -->
+    <div class="explorer-header" style="justify-content: flex-start; gap: 15px;">
+      <span style="font-weight: 600; font-size: 0.9rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
+        <i data-lucide="globe" style="width: 18px; height: 18px; color: var(--neon-blue);"></i> Quick Region Filter:
+      </span>
+      <div class="region-toggle-bar">
+        <button class="tab-pill active" data-region="all">All Regions</button>
+        <button class="tab-pill" data-region="ca">🇨🇦 Canada (CA)</button>
+        <button class="tab-pill" data-region="gb">🇬🇧 Great Britain (GB)</button>
+        <button class="tab-pill" data-region="us">🇺🇸 United States (US)</button>
+      </div>
+    </div>
+
     <!-- Analytics Charts Section -->
     <section class="charts-section">
       <div class="chart-card">
         <div class="card-header">
-          <h3><i data-lucide="bar-chart-2"></i> Category View Count Distribution</h3>
-          <span class="card-sub">AWS Glue Data Catalog Materialized View</span>
+          <h3><i data-lucide="bar-chart-2"></i> Category Analytics Breakdown</h3>
+          <div class="metric-switcher">
+            <button class="switcher-btn active" data-metric="views">Views</button>
+            <button class="switcher-btn" data-metric="likes">Likes</button>
+            <button class="switcher-btn" data-metric="comments">Comments</button>
+          </div>
         </div>
         <div class="chart-container">
           <canvas id="chart-top-categories"></canvas>
@@ -119,7 +136,7 @@
     <section class="charts-section secondary-charts">
       <div class="chart-card">
         <div class="card-header">
-          <h3><i data-lucide="award"></i> Top 10 Channels by Cumulative Views</h3>
+          <h3><i data-lucide="award"></i> Top 10 Channels by Viewership</h3>
           <span class="card-sub">Aggregated Views via Athena Engine</span>
         </div>
         <div class="chart-container">
@@ -163,6 +180,8 @@
           <button id="btn-run-sql" class="btn btn-primary"><i data-lucide="play"></i> Run Query</button>
           <button id="btn-sample-sql-1" class="btn btn-xs btn-outline">Top 5 Records</button>
           <button id="btn-sample-sql-2" class="btn btn-xs btn-outline">Regional Summary</button>
+          <button id="btn-sample-sql-3" class="btn btn-xs btn-outline">High Engagement</button>
+          <button id="btn-sample-sql-4" class="btn btn-xs btn-outline">Top Channels</button>
         </div>
       </div>
 
@@ -184,13 +203,6 @@
             <i data-lucide="search"></i>
             <input type="text" id="input-search" placeholder="Search title or channel...">
           </div>
-
-          <select id="select-region" class="filter-select">
-            <option value="all">All Regions</option>
-            <option value="ca">CA (Canada)</option>
-            <option value="gb">GB (Great Britain)</option>
-            <option value="us">US (United States)</option>
-          </select>
 
           <select id="select-category" class="filter-select">
             <option value="all">All Categories</option>

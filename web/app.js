@@ -10,11 +10,13 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentSearch = "";
   let currentSortBy = "views";
   let currentSortDir = "desc";
+  let activeChartMetric = "views";
 
   let topCategoriesChart = null;
   let regionalChart = null;
   let topChannelsChart = null;
   let engagementChart = null;
+  let cachedSummaryData = null;
 
   // DOM Elements
   const statVideos = document.getElementById("stat-total-videos");
@@ -29,7 +31,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnNext = document.getElementById("btn-next-page");
 
   const inputSearch = document.getElementById("input-search");
-  const selectRegion = document.getElementById("select-region");
   const selectCategory = document.getElementById("select-category");
   const btnExportCsv = document.getElementById("btn-export-csv");
 
@@ -45,8 +46,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const sqlInput = document.getElementById("sql-input");
   const btnRunSql = document.getElementById("btn-run-sql");
   const sqlResultsContainer = document.getElementById("sql-results-container");
+
   const btnSampleSql1 = document.getElementById("btn-sample-sql-1");
   const btnSampleSql2 = document.getElementById("btn-sample-sql-2");
+  const btnSampleSql3 = document.getElementById("btn-sample-sql-3");
+  const btnSampleSql4 = document.getElementById("btn-sample-sql-4");
 
   // Load Initial Data
   fetchSummaryData();
@@ -54,11 +58,25 @@ document.addEventListener("DOMContentLoaded", () => {
   fetchArchitectureData();
   fetchTableData();
 
-  // Filter Event Listeners
-  selectRegion.addEventListener("change", (e) => {
-    currentRegion = e.target.value;
-    currentPage = 0;
-    fetchTableData();
+  // Region Toggle Bar Handler
+  document.querySelectorAll(".region-toggle-bar .tab-pill").forEach(pill => {
+    pill.addEventListener("click", () => {
+      document.querySelectorAll(".region-toggle-bar .tab-pill").forEach(p => p.classList.remove("active"));
+      pill.classList.add("active");
+      currentRegion = pill.getAttribute("data-region");
+      currentPage = 0;
+      fetchTableData();
+    });
+  });
+
+  // Metric Switcher Handler for Category Chart
+  document.querySelectorAll(".metric-switcher .switcher-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".metric-switcher .switcher-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      activeChartMetric = btn.getAttribute("data-metric");
+      if (cachedSummaryData) renderPrimaryCharts(cachedSummaryData);
+    });
   });
 
   selectCategory.addEventListener("change", (e) => {
@@ -127,6 +145,16 @@ document.addEventListener("DOMContentLoaded", () => {
     runCustomSqlQuery();
   });
 
+  btnSampleSql3.addEventListener("click", () => {
+    sqlInput.value = "SELECT title, category_name, views, likes, like_rate_pct FROM youtube_data WHERE views > 1000000 ORDER BY like_rate_pct DESC LIMIT 10;";
+    runCustomSqlQuery();
+  });
+
+  btnSampleSql4.addEventListener("click", () => {
+    sqlInput.value = "SELECT channel_title, COUNT(*) as videos, SUM(views) as total_views FROM youtube_data GROUP BY channel_title ORDER BY total_views DESC LIMIT 10;";
+    runCustomSqlQuery();
+  });
+
   btnRunEtl.addEventListener("click", () => {
     modalEtl.classList.add("active");
   });
@@ -144,6 +172,7 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const res = await fetch("/api/summary");
       const data = await res.json();
+      cachedSummaryData = data;
 
       statVideos.textContent = Number(data.total_videos || 0).toLocaleString();
       statViews.textContent = formatCompactNumber(data.total_views || 0);
@@ -245,18 +274,24 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    tableBody.innerHTML = records.map(r => `
-      <tr>
-        <td><span class="region-badge">${str(r.region).toUpperCase()}</span></td>
-        <td>${escapeHtml(r.category_name || 'General')}</td>
-        <td title="${escapeHtml(r.title)}"><strong>${escapeHtml(truncate(r.title, 38))}</strong></td>
-        <td>${escapeHtml(truncate(r.channel_title || 'N/A', 22))}</td>
-        <td>${Number(r.views || 0).toLocaleString()}</td>
-        <td>${Number(r.likes || 0).toLocaleString()}</td>
-        <td>${Number(r.comment_count || 0).toLocaleString()}</td>
-        <td>${r.like_rate_pct ? r.like_rate_pct + '%' : '0%'}</td>
-      </tr>
-    `).join("");
+    const flagMap = { 'ca': '🇨🇦 CA', 'gb': '🇬🇧 GB', 'us': '🇺🇸 US' };
+
+    tableBody.innerHTML = records.map(r => {
+      const reg = str(r.region).toLowerCase();
+      const flagLabel = flagMap[reg] || reg.toUpperCase();
+      return `
+        <tr>
+          <td><span class="region-badge">${flagLabel}</span></td>
+          <td>${escapeHtml(r.category_name || 'General')}</td>
+          <td title="${escapeHtml(r.title)}"><strong>${escapeHtml(truncate(r.title, 38))}</strong></td>
+          <td>${escapeHtml(truncate(r.channel_title || 'N/A', 22))}</td>
+          <td>${Number(r.views || 0).toLocaleString()}</td>
+          <td>${Number(r.likes || 0).toLocaleString()}</td>
+          <td>${Number(r.comment_count || 0).toLocaleString()}</td>
+          <td>${r.like_rate_pct ? r.like_rate_pct + '%' : '0%'}</td>
+        </tr>
+      `;
+    }).join("");
 
     const endRecord = Math.min(offset + records.length, totalCount);
     paginationInfo.textContent = `Showing ${offset + 1} - ${endRecord} of ${totalCount.toLocaleString()} records`;
@@ -378,21 +413,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (topCategoriesChart) topCategoriesChart.destroy();
 
+    const chartColors = [
+      "rgba(56, 189, 248, 0.9)",
+      "rgba(168, 85, 247, 0.9)",
+      "rgba(244, 63, 94, 0.9)",
+      "rgba(251, 191, 36, 0.9)",
+      "rgba(52, 211, 153, 0.9)"
+    ];
+
     topCategoriesChart = new Chart(ctxCategories, {
       type: "bar",
       data: {
         labels: catLabels,
         datasets: [{
-          label: "Total Views",
+          label: activeChartMetric.toUpperCase(),
           data: catViews,
-          backgroundColor: [
-            "rgba(59, 130, 246, 0.85)",
-            "rgba(147, 51, 234, 0.85)",
-            "rgba(239, 68, 68, 0.85)",
-            "rgba(245, 158, 11, 0.85)",
-            "rgba(16, 185, 129, 0.85)"
-          ],
-          borderRadius: 6
+          backgroundColor: chartColors,
+          borderRadius: 8,
+          borderWidth: 1,
+          borderColor: "rgba(255, 255, 255, 0.2)"
         }]
       },
       options: {
@@ -400,10 +439,10 @@ document.addEventListener("DOMContentLoaded", () => {
         maintainAspectRatio: false,
         plugins: { legend: { display: false } },
         scales: {
-          x: { ticks: { color: "#94a3b8" }, grid: { display: false } },
+          x: { ticks: { color: "#94a3b8", font: { weight: "600" } }, grid: { display: false } },
           y: { 
             ticks: { color: "#94a3b8", callback: (v) => formatCompactNumber(v) },
-            grid: { color: "rgba(255, 255, 255, 0.06)" }
+            grid: { color: "rgba(255, 255, 255, 0.07)" }
           }
         }
       }
@@ -423,11 +462,11 @@ document.addEventListener("DOMContentLoaded", () => {
         datasets: [{
           data: regValues,
           backgroundColor: [
-            "rgba(59, 130, 246, 0.9)",
-            "rgba(239, 68, 68, 0.9)",
-            "rgba(245, 158, 11, 0.9)"
+            "rgba(56, 189, 248, 0.95)",
+            "rgba(244, 63, 94, 0.95)",
+            "rgba(251, 191, 36, 0.95)"
           ],
-          borderWidth: 2,
+          borderWidth: 3,
           borderColor: "#0f172a"
         }]
       },
@@ -435,7 +474,7 @@ document.addEventListener("DOMContentLoaded", () => {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: { position: "right", labels: { color: "#94a3b8", font: { size: 12 } } }
+          legend: { position: "right", labels: { color: "#cbd5e1", font: { size: 13, weight: "600" } } }
         }
       }
     });
@@ -459,8 +498,8 @@ document.addEventListener("DOMContentLoaded", () => {
         datasets: [{
           label: "Total Views",
           data: channelViews,
-          backgroundColor: "rgba(168, 85, 247, 0.85)",
-          borderRadius: 4
+          backgroundColor: "rgba(168, 85, 247, 0.9)",
+          borderRadius: 6
         }]
       },
       options: {
@@ -469,8 +508,8 @@ document.addEventListener("DOMContentLoaded", () => {
         maintainAspectRatio: false,
         plugins: { legend: { display: false } },
         scales: {
-          x: { ticks: { color: "#94a3b8", callback: (v) => formatCompactNumber(v) }, grid: { color: "rgba(255, 255, 255, 0.06)" } },
-          y: { ticks: { color: "#94a3b8" }, grid: { display: false } }
+          x: { ticks: { color: "#94a3b8", callback: (v) => formatCompactNumber(v) }, grid: { color: "rgba(255, 255, 255, 0.07)" } },
+          y: { ticks: { color: "#cbd5e1" }, grid: { display: false } }
         }
       }
     });
@@ -490,10 +529,12 @@ document.addEventListener("DOMContentLoaded", () => {
           label: "Avg Like Rate (%)",
           data: engRates,
           borderColor: "#38bdf8",
-          backgroundColor: "rgba(56, 189, 248, 0.15)",
+          backgroundColor: "rgba(56, 189, 248, 0.2)",
+          borderWidth: 3,
           fill: true,
-          tension: 0.3,
-          pointBackgroundColor: "#38bdf8"
+          tension: 0.4,
+          pointBackgroundColor: "#38bdf8",
+          pointRadius: 5
         }]
       },
       options: {
@@ -501,8 +542,8 @@ document.addEventListener("DOMContentLoaded", () => {
         maintainAspectRatio: false,
         plugins: { legend: { display: false } },
         scales: {
-          x: { ticks: { color: "#94a3b8" }, grid: { display: false } },
-          y: { ticks: { color: "#94a3b8", callback: v => v + '%' }, grid: { color: "rgba(255, 255, 255, 0.06)" } }
+          x: { ticks: { color: "#cbd5e1" }, grid: { display: false } },
+          y: { ticks: { color: "#94a3b8", callback: v => v + '%' }, grid: { color: "rgba(255, 255, 255, 0.07)" } }
         }
       }
     });
