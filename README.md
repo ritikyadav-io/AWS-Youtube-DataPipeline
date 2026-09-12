@@ -122,12 +122,6 @@ Re-execute the ETL engine to process datasets locally:
 npm run etl
 ```
 
-### 4. Re-generate PowerPoint Presentation Deck
-Generate the `.pptx` presentation deck:
-```bash
-npm run presentation
-```
-
 ---
 
 ## 🔍 Amazon Athena / DuckDB SQL Query Console
