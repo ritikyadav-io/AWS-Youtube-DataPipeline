@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube Data Pipeline | AWS ETL Analytics</title>
+  <meta name="description" content="AWS Cloud ETL Data Pipeline & Analytics Dashboard for YouTube Video Statistics">
+  <!-- Google Fonts & Chart.js & Lucide Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="navbar">
+    <div class="nav-brand">
+      <div class="logo-icon">
+        <i data-lucide="layers"></i>
+      </div>
+      <div class="logo-text">
+        <span class="title-primary">YouTube Data Pipeline</span>
+        <span class="badge-aws"><i data-lucide="cloud"></i> AWS Data Lake & Analytics</span>
+      </div>
+    </div>
+
+    <div class="nav-actions">
+      <button id="btn-open-sql" class="btn btn-secondary">
+        <i data-lucide="terminal"></i> Athena SQL Console
+      </button>
+      <button id="btn-run-etl" class="btn btn-primary">
+        <i data-lucide="play"></i> Execute Glue ETL Job
+      </button>
+    </div>
+  </header>
+
+  <div class="app-layout">
+    <!-- Hero / Status Banner -->
+    <section class="hero-banner">
+      <div class="hero-content">
+        <h1>AWS ETL Pipeline & Data Analytics Dashboard</h1>
+        <p>Enterprise data lake analytics processing YouTube trending statistics via AWS Lambda, Glue PySpark ETL, S3 Parquet storage, and Athena SQL queries.</p>
+      </div>
+
+      <div class="hero-status-pills">
+        <div class="status-pill">
+          <span class="dot green"></span>
+          <span>Status: Active</span>
+        </div>
+        <div class="status-pill">
+          <i data-lucide="clock"></i>
+          <span id="pill-last-run">Last Job Execution: In Progress</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Key Metrics Grid -->
+    <section class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-icon purple"><i data-lucide="file-text"></i></div>
+        <div class="metric-info">
+          <span class="metric-label">Processed Records</span>
+          <span class="metric-value" id="stat-total-videos">--</span>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon blue"><i data-lucide="eye"></i></div>
+        <div class="metric-info">
+          <span class="metric-label">Total Views</span>
+          <span class="metric-value" id="stat-total-views">--</span>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon red"><i data-lucide="thumbs-up"></i></div>
+        <div class="metric-info">
+          <span class="metric-label">Total Likes</span>
+          <span class="metric-value" id="stat-total-likes">--</span>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon amber"><i data-lucide="message-square"></i></div>
+        <div class="metric-info">
+          <span class="metric-label">Total Comments</span>
+          <span class="metric-value" id="stat-total-comments">--</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Analytics Charts Section -->
+    <section class="charts-section">
+      <div class="chart-card">
+        <div class="card-header">
+          <h3><i data-lucide="bar-chart-2"></i> Category View Count Distribution</h3>
+          <span class="card-sub">AWS Glue Data Catalog Materialized View</span>
+        </div>
+        <div class="chart-container">
+          <canvas id="chart-top-categories"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="card-header">
+          <h3><i data-lucide="pie-chart"></i> Regional Data Partition Share</h3>
+          <span class="card-sub">S3 Partition Breakdown (CA, GB, US)</span>
+        </div>
+        <div class="chart-container">
+          <canvas id="chart-regional"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Top Channels Leaderboard & Engagement -->
+    <section class="charts-section secondary-charts">
+      <div class="chart-card">
+        <div class="card-header">
+          <h3><i data-lucide="award"></i> Top 10 Channels by Cumulative Views</h3>
+          <span class="card-sub">Aggregated Views via Athena Engine</span>
+        </div>
+        <div class="chart-container">
+          <canvas id="chart-top-channels"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="card-header">
+          <h3><i data-lucide="trending-up"></i> Category Like Rate Percentage</h3>
+          <span class="card-sub">Engagement Metric Calculation</span>
+        </div>
+        <div class="chart-container">
+          <canvas id="chart-engagement"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- AWS Architecture Explorer -->
+    <section id="architecture" class="architecture-section">
+      <div class="section-title">
+        <h2><i data-lucide="git-branch"></i> Pipeline System Architecture</h2>
+        <p>End-to-end data pipeline flow across AWS Cloud Services</p>
+      </div>
+
+      <div class="architecture-flow" id="arch-flow-container">
+        <!-- Dynamically rendered architecture cards -->
+      </div>
+    </section>
+
+    <!-- Athena SQL Query Console Section -->
+    <section id="sql-console-section" class="sql-console-card">
+      <div class="card-header">
+        <h3><i data-lucide="code-2"></i> Amazon Athena SQL Query Editor</h3>
+        <span class="card-sub">Execute SQL queries against target table <code>youtube_data</code></span>
+      </div>
+
+      <div class="sql-editor-container">
+        <textarea id="sql-input" class="sql-textarea" rows="3">SELECT category_name, COUNT(*) as video_count, SUM(views) as total_views, AVG(like_rate_pct) as avg_like_pct FROM youtube_data GROUP BY category_name ORDER BY total_views DESC LIMIT 5;</textarea>
+        <div class="sql-actions">
+          <button id="btn-run-sql" class="btn btn-primary"><i data-lucide="play"></i> Run Query</button>
+          <button id="btn-sample-sql-1" class="btn btn-xs btn-outline">Top 5 Records</button>
+          <button id="btn-sample-sql-2" class="btn btn-xs btn-outline">Regional Summary</button>
+        </div>
+      </div>
+
+      <div id="sql-results-container" class="table-container sql-results">
+        <div class="text-center p-3 text-muted">Click "Run Query" to execute SQL analytics...</div>
+      </div>
+    </section>
+
+    <!-- Data Explorer & Table Section -->
+    <section class="data-explorer-section">
+      <div class="explorer-header">
+        <div class="explorer-title">
+          <h2><i data-lucide="database"></i> Analytical Dataset Explorer</h2>
+          <p>Joined dataset output from AWS Glue Catalog & Athena views</p>
+        </div>
+
+        <div class="explorer-filters">
+          <div class="search-box">
+            <i data-lucide="search"></i>
+            <input type="text" id="input-search" placeholder="Search title or channel...">
+          </div>
+
+          <select id="select-region" class="filter-select">
+            <option value="all">All Regions</option>
+            <option value="ca">CA (Canada)</option>
+            <option value="gb">GB (Great Britain)</option>
+            <option value="us">US (United States)</option>
+          </select>
+
+          <select id="select-category" class="filter-select">
+            <option value="all">All Categories</option>
+          </select>
+
+          <button id="btn-export-csv" class="btn btn-sm btn-outline"><i data-lucide="download"></i> Export CSV</button>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Region</th>
+              <th>Category</th>
+              <th class="sortable" data-sort="title">Video Title <i data-lucide="arrow-up-down"></i></th>
+              <th class="sortable" data-sort="channel_title">Channel Title <i data-lucide="arrow-up-down"></i></th>
+              <th class="sortable" data-sort="views">Views <i data-lucide="arrow-up-down"></i></th>
+              <th class="sortable" data-sort="likes">Likes <i data-lucide="arrow-up-down"></i></th>
+              <th class="sortable" data-sort="comment_count">Comments <i data-lucide="arrow-up-down"></i></th>
+              <th class="sortable" data-sort="like_rate_pct">Engagement % <i data-lucide="arrow-up-down"></i></th>
+            </tr>
+          </thead>
+          <tbody id="table-body">
+            <tr><td colspan="8" class="text-center">Loading dataset...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="table-pagination">
+        <span id="pagination-info">Showing 0 of 0 records</span>
+        <div class="pagination-controls">
+          <button id="btn-prev-page" class="btn btn-sm btn-outline"><i data-lucide="chevron-left"></i> Prev</button>
+          <button id="btn-next-page" class="btn btn-sm btn-outline">Next <i data-lucide="chevron-right"></i></button>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Glue Job Execution Log Modal -->
+  <div id="modal-etl" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><i data-lucide="terminal"></i> AWS Glue Job Execution Console</h3>
+        <button id="btn-close-modal" class="btn-icon"><i data-lucide="x"></i></button>
+      </div>
+
+      <div class="modal-body">
+        <p class="modal-desc">Executing Glue Job: <code>youtube_etl_materialized_view</code></p>
+        <div class="terminal-window">
+          <pre id="etl-logs">Click "Execute Job" to start job execution...</pre>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button id="btn-trigger-etl-start" class="btn btn-primary">
+          <i data-lucide="play"></i> Execute Job
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

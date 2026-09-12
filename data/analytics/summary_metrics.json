@@ -1,0 +1,25 @@
+{
+  "total_videos": 14204,
+  "total_views": 20491030082,
+  "total_likes": 537308908,
+  "total_comments": 56560318,
+  "regions": [
+    "ca",
+    "gb",
+    "us"
+  ],
+  "categories_count": 16,
+  "top_categories": {
+    "Music": 6085422172,
+    "Entertainment": 3903889564,
+    "People & Blogs": 3594633014,
+    "Science & Technology": 2643148974,
+    "Film & Animation": 1501885420
+  },
+  "regional_views": {
+    "ca": 3836411594,
+    "gb": 10712902672,
+    "us": 5941715816
+  },
+  "executed_at": "2026-09-12 12:16:05"
+}
