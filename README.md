@@ -161,13 +161,6 @@ LIMIT 10;
 
 ---
 
-## 📄 PowerPoint Presentation Deck
-
-An automated 8-slide presentation deck is included in the root directory:
-- 📁 **File**: [AWS_YouTube_Data_Pipeline_Presentation.pptx](AWS_YouTube_Data_Pipeline_Presentation.pptx)
-
----
-
 ## 📜 License
 
 This project is licensed under the **MIT License** - see the `LICENSE` file for details.
